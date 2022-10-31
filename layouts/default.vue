@@ -53,6 +53,9 @@ export default {
       }, {
         title: 'Kanala mesaj at',
         to: '/kanala-mesaj-at'
+      }, {
+        title: 'Kanal engelleri',
+        to: '/kanal-engelleri'
       }],
       miniVariant: false,
       right: false,

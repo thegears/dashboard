@@ -24,8 +24,8 @@ export default {
   },
   data () {
     return {
-      pageNotFound: '404 Not Found',
-      otherError: 'An error occurred'
+      pageNotFound: 'Sayfa bulunamadı',
+      otherError: 'Bir hata oluştu'
     }
   },
   head () {

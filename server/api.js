@@ -123,4 +123,62 @@ app.post("/message", async (req, res) => {
 	};
 });
 
+app.get("/kufurEngelClosedChannels", async (req, res) => {
+	let channels = await db.get("kufurEngelClosedChannels") || [];
+
+	res.status(200).send({
+		channels
+	});
+});
+
+app.post("/kufurEngelClosedChannels", async (req, res) => {
+	await db.push("kufurEngelClosedChannels", {
+		id: req.body.channel,
+		name: client.channels.cache.get(req.body.channel).name
+	});
+
+	res.status(200).send();
+});
+
+app.delete("/kufurEngelClosedChannels", async (req, res) => {
+	await db.pull("kufurEngelClosedChannels", (element, index, array) => element.id == req.body.channel, true)
+	res.status(200).send();
+});
+
+
+app.get("/kufurEngel", async (req, res) => {
+	let open = await db.get("kufurEngel") || false;
+
+	res.status(200).send({
+		open
+	});
+});
+
+app.post("/kufurEngel", async (req, res) => {
+	let open = await db.get("kufurEngel");
+
+	if (!open) await db.set("kufurEngel", true);
+	else await db.set("kufurEngel", false);
+
+	res.status(200).send();
+});
+
+
+//BOT
+client.on("messageCreate", async (message) => {
+	if (message.guild.id != db.get("guild")) return false;
+
+	let kufurEngelOpen = await db.get("kufurEngel");
+	let kufurEngelClosedChannels = await db.get("kufurEngelClosedChannels") || [];
+	let kufurliste = ["aq", "amk", "sik", "sg", "oç"];
+
+	if (kufurEngelOpen && !kufurEngelClosedChannels.map(a => a.id).includes(message.channel.id) && kufurliste.some(k => message.content.toLowerCase().split(" ").includes(k))) {
+		try {
+			await message.delete();
+		} catch {
+			console.log("Mesajı silerken hata aldım.");
+		}
+	};
+});
+
 module.exports = app;
